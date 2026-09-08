@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Portfolio viewport checks</title>
+<style>body{margin:16px;font:14px system-ui;background:#eee}nav{display:flex;gap:12px;margin-bottom:16px}iframe{border:0;height:1000px;display:block;background:white}button{padding:8px}</style></head>
+<body><nav aria-label="Preview viewport"><button data-width="1440">Desktop · 1440</button><button data-width="768">Tablet · 768</button><button data-width="390">Mobile · 390</button><button data-mode="0">Canvas</button><button data-mode="1">Panorama</button><button data-mode="2">Slider</button></nav><pre aria-label="Layout measurements"></pre><iframe title="Portfolio preview" src="/" width="1440"></iframe>
+<script type="module">const frame=document.querySelector('iframe');document.querySelectorAll('[data-width]').forEach(button=>button.addEventListener('click',()=>{frame.width=button.dataset.width}));
+document.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>{frame.contentDocument.querySelectorAll('.demo-tab')[button.dataset.mode].click();requestAnimationFrame(measure);}));
+function measure(){
+ const d=frame.contentDocument;
+ const viewer=d.querySelector('.viewer');
+ if(!viewer)return;
+ const bounds=viewer.getBoundingClientRect();
+ const caption=d.querySelector('.viewer > .caption')?.getBoundingClientRect();
+ const dock=d.querySelector('.viewer > .glass-panel')?.getBoundingClientRect();
+ const stage=d.querySelector('.slider-stage, .canvas-stage, .panorama-window');
+ document.querySelector('pre').textContent=JSON.stringify({viewport:d.documentElement.clientWidth,pageWidth:d.documentElement.scrollWidth,mode:viewer.getAttribute('aria-label'),frameWidth:bounds.width,frameHeight:bounds.height,stageHeight:stage.getBoundingClientRect().height,captionHeight:caption?.height,captionAboveDock:!caption||caption.bottom<=dock.top,dockInside:!dock||dock.bottom<=bounds.bottom},null,2);
+}
+frame.addEventListener('load',()=>{new ResizeObserver(measure).observe(frame.contentDocument.body);frame.contentDocument.addEventListener('click',()=>requestAnimationFrame(measure));measure();});
+</script></body>
+</html>
