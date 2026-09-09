@@ -1,0 +1,207 @@
+.viewer, .viewer *, .lightbox, .lightbox * { box-sizing: border-box; }
+.viewer button, .lightbox button { font: inherit; cursor: pointer; }
+.viewer button:disabled { cursor: default; }
+.viewer button:focus-visible, .viewer [tabindex]:focus-visible, .lightbox button:focus-visible, .lightbox [tabindex]:focus-visible { outline: 2px solid var(--focus, #737a83); outline-offset: 5px; }
+.viewer { --glass-top: rgba(255,255,255,.52); --glass-bottom: rgba(255,255,255,.09); --glass-rim: rgba(100,110,100,.08); --glass-shadow: rgba(30,40,30,.065); --hover-shadow: rgba(40,50,40,.16); --thumb-top: rgba(255,255,255,.85); --thumb-bottom: rgba(255,255,255,.28); --ink: #353a35; --muted: #747b74; --glass: rgba(255,255,255,.17); --edge: rgba(65,75,65,.12); --highlight: rgba(255,255,255,.42); --shadow: 0 10px 26px rgba(32,42,32,.08), 0 2px 5px rgba(32,42,32,.035); --dot: rgba(100,110,100,.3); --active: rgba(255,255,255,.86); position: relative; width: 100%; height: 680px; color: var(--ink); background: transparent; display: flex; flex-direction: column; align-items: center; }
+[data-theme='dark'] { --glass-top: rgba(170,180,170,.10); --glass-bottom: rgba(30,35,30,.10); --glass-rim: rgba(175,185,175,.12); --glass-shadow: rgba(0,0,0,.16); --hover-shadow: rgba(0,0,0,.3); --thumb-top: rgba(235,240,235,.52); --thumb-bottom: rgba(180,190,180,.14); --ink: #d5d8d3; --muted: #92978f; --glass: rgba(25,27,25,.2); --edge: rgba(165,177,165,.13); --highlight: rgba(135,145,135,.13); --shadow: 0 10px 26px rgba(0,0,0,.12); --dot: rgba(165,174,165,.32); --active: rgba(240,244,238,.7); --focus: #b2b9b0; }
+.study-image { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; }
+.media-state { display: grid; place-items: center; width: 100%; height: 100%; min-height: 80px; color: var(--muted); font-size: 13px; }
+.glass-panel { background: var(--glass); border: 1px solid var(--edge); border-radius: 22px; box-shadow: var(--shadow), inset 0 1px 0 var(--highlight); backdrop-filter: blur(22px) saturate(115%); -webkit-backdrop-filter: blur(22px) saturate(115%); padding: 17px 23px; color: var(--ink); }
+.caption { height: 88px; flex: 0 0 88px; width: min(680px, 90%); position: relative; text-align: center; color: var(--ink); }
+.caption > div { position: absolute; inset: 0; padding-top: 18px; }
+.caption h2 { font-size: 15px; font-weight: 500; margin: 0 0 7px; letter-spacing: -.25px; }
+.caption p { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 0; }
+.lightbox { width: 96vw; max-width: none; height: 96vh; max-height: none; padding: 52px 40px 16px; border: 1px solid rgba(120,130,120,.15); border-radius: 16px; background: rgba(248,249,246,.88); backdrop-filter: blur(24px) saturate(125%); color: #333; overflow: visible; animation: detail-surface-in .36s cubic-bezier(.22, 1, .36, 1); }
+.lightbox[data-theme='dark'] { background: rgba(21,23,21,.88); color: #ddd; }
+.lightbox::backdrop { background: rgba(18,22,18,.55); backdrop-filter: blur(12px); animation: detail-backdrop-in .36s ease; }
+.lightbox-media { height: calc(100% - 90px); width: 100%; }
+.lightbox:has(.lightbox-media:last-child) .lightbox-media { height: 100%; }
+.lightbox-media.is-panorama { overflow-x: auto; overflow-y: hidden; }
+.lightbox-media.is-panorama .study-image { height: 100%; width: auto; max-width: none; }
+.lightbox .caption { margin: auto; }
+.close-view { position: absolute; right: 20px; top: 16px; width: 32px; height: 32px; border: 1px solid var(--edge, #ddd); border-radius: 50%; background: transparent; color: inherit; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+.canvas-stage { width: 100%; flex: 1; min-height: 280px; position: relative; overflow: hidden; perspective: 1400px; }
+.canvas-card { position: absolute; width: min(66%, 740px); height: 89%; padding: 0; border: 0; background: transparent; transform-style: preserve-3d; }
+.canvas-card .study-image { filter: drop-shadow(0 10px 15px rgba(25,30,25,.08)); }
+.map-dock { flex: 0 0 auto; margin: 20px 0 18px; padding: 15px 20px; border-radius: 20px; }
+.dot-map { display: grid; }
+.dot-target { display: grid; place-items: center; height: 16px; width: 16px; border: none; padding: 0; background: none; }
+.map-dot { display: block; height: 4px; width: 4px; border-radius: 50%; background: var(--dot); transition: width .18s, height .18s, background .18s, transform .15s, box-shadow .18s; }
+.dot-target.is-active .map-dot, .dot-target:hover .map-dot { background: var(--active); width: 7px; height: 7px; box-shadow: 0 0 0 1px rgba(90,105,90,.2), 0 1px 3px rgba(35,45,35,.16); }
+.dot-target.is-locked .map-dot { width: 8px; height: 8px; box-shadow: 0 0 0 1px rgba(120,135,120,.26), 0 0 5px rgba(255,255,255,.3); }
+.panorama-viewer { padding-top: 40px; }
+.panorama-window { width: min(100%, 1080px); height: 450px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; border-radius: 10px; }
+.panorama-window::-webkit-scrollbar { display: none; }
+.panorama-content { display: block; height: 100%; width: max-content; margin: 0 auto; border: none; background: transparent; padding: 0; }
+.panorama-content .study-image { width: auto; max-width: none; height: 100%; }
+.linear-dock { width: min(480px, 82%); padding: 7px 8px; margin-top: 18px; border-radius: 18px; background: linear-gradient(135deg, var(--glass-top), var(--glass-bottom) 55%, var(--glass-top)); border-color: var(--glass-rim); box-shadow: 0 4px 14px var(--glass-shadow), inset 0 1px 0 var(--glass-top), inset 0 -1px 0 var(--glass-bottom); backdrop-filter: blur(24px) saturate(140%); -webkit-backdrop-filter: blur(24px) saturate(140%); }
+.scroll-track { height: 18px; width: 100%; position: relative; touch-action: none; cursor: pointer; }
+.scroll-rail { position: absolute; top: 8px; height: 2px; width: 100%; border-radius: 3px; background: var(--dot); opacity: .35; }
+.scroll-thumb { position: absolute; top: 3px; height: 12px; border-radius: 8px; background: linear-gradient(180deg, var(--thumb-top), var(--thumb-bottom)); border: 0; box-shadow: inset 0 1px 0 var(--glass-top), inset 0 -1px 0 var(--glass-rim), 0 2px 5px var(--glass-shadow); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; gap: 3px; transition: box-shadow .2s, filter .2s; cursor: grab; }
+.scroll-thumb i { height: 4px; width: 1px; background: var(--muted); opacity: .3; }
+.scroll-thumb:hover { box-shadow: inset 0 1px 0 var(--thumb-top), 0 3px 8px var(--hover-shadow); filter: brightness(1.04); }
+.scroll-track:active .scroll-thumb { cursor: grabbing; }
+.scroll-track.is-disabled { opacity: .35; cursor: default; }
+.scroll-track.is-disabled .scroll-thumb { cursor: default; }
+.slider-viewer { padding-top: 30px; }
+.slider-stage { width: 100%; height: 460px; position: relative; overflow: hidden; perspective: 1400px; }
+.slider-card { position: absolute; top: 50%; width: min(82%, 960px); height: 100%; padding: 0; border: none; background: transparent; }
+.slider-card .study-image { filter: drop-shadow(0 10px 15px rgba(25,30,25,.07)); }
+.chip-track { display: flex; position: relative; height: 18px; touch-action: none; user-select: none; cursor: grab; }
+.chip-track:active { cursor: grabbing; }
+.chip-target { flex: 1; min-width: 0; height: 18px; padding: 6px 3px; background: none; border: 0; cursor: inherit; position: relative; z-index: 1; }
+.chip { display: block; width: 100%; height: 6px; background: var(--dot); border-radius: 4px; opacity: .32; box-shadow: 0 2px 6px transparent; transition: opacity .48s cubic-bezier(.22, 1, .36, 1), box-shadow .48s cubic-bezier(.22, 1, .36, 1); }
+.chip-indicator { position: absolute; top: 6px; height: 6px; padding: 0 3px; pointer-events: none; z-index: 2; }
+.chip-indicator::after { content: ''; display: block; height: 100%; width: 100%; background: linear-gradient(180deg, var(--thumb-top), var(--thumb-bottom)); border-radius: 4px; box-shadow: 0 2px 5px var(--hover-shadow), inset 0 1px 0 var(--glass-top); transition: box-shadow .48s cubic-bezier(.22, 1, .36, 1); }
+.chip-target:hover .chip { opacity: .56; box-shadow: 0 2px 6px var(--hover-shadow); transition-duration: .18s; }
+.chip-target.is-neighbor .chip { opacity: .4; box-shadow: 0 1px 3px var(--glass-shadow); }
+.chip-track:has(.chip-target.is-active:hover) .chip-indicator::after { box-shadow: 0 3px 8px var(--hover-shadow), inset 0 1px 0 var(--thumb-top); }
+.panorama-viewer .linear-dock { background: linear-gradient(155deg, var(--glass-top), var(--glass-bottom) 48%, var(--glass-top)); }
+.map-dock { box-shadow: 0 4px 14px var(--glass-shadow), inset 0 1px 0 var(--highlight); }
+/* Keep controls in view on laptop-height screens. Host pages can override height. */
+.viewer { height: max(520px, calc(100svh - 180px)); }
+.map-dock { padding: 8px 10px; margin: 12px 0; }
+.dot-target { width: 14px; height: 14px; }
+.panorama-viewer, .slider-viewer { padding-top: 28px; padding-bottom: 18px; }
+.panorama-window, .slider-stage { flex: 1; min-height: 0; }
+@media (max-width: 700px) { .canvas-card { width: 86%; } .slider-card { width: 82%; } }
+
+/* A quiet lift previews the same easing used by the expanded image. */
+.canvas-card .study-image, .slider-card .study-image { transition: transform .42s cubic-bezier(.22, 1, .36, 1), filter .42s cubic-bezier(.22, 1, .36, 1); }
+.viewer .canvas-card, .viewer .slider-card { cursor: zoom-in; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .canvas-card:hover .study-image, .slider-card:hover .study-image { transform: translateY(-2px); filter: drop-shadow(0 12px 18px rgba(25,30,25,.12)); }
+}
+.slider-viewer { padding-top: 8px; }
+.slider-viewer > .caption { height: 62px; flex-basis: 62px; }
+.slider-viewer > .caption > div { padding-top: 10px; }
+.slider-viewer > .linear-dock { margin-top: 2px; }
+.lightbox .study-image { transform-origin: center; }
+.lightbox.is-closing { animation: detail-surface-out .28s ease forwards; }
+.lightbox.is-closing::backdrop { animation: detail-backdrop-out .28s ease forwards; }
+.close-view { background: var(--glass); border-color: var(--glass-rim); box-shadow: 0 2px 8px var(--glass-shadow); transition: background .3s, box-shadow .3s; }
+.close-view:hover { background: var(--glass-top); box-shadow: 0 3px 10px var(--glass-shadow); }
+@keyframes detail-surface-in { from { background-color: transparent; border-color: transparent; } }
+@keyframes detail-surface-out { to { background-color: transparent; border-color: transparent; backdrop-filter: blur(0); } }
+@keyframes detail-backdrop-in { from { background-color: transparent; backdrop-filter: blur(0); } }
+@keyframes detail-backdrop-out { to { background-color: transparent; backdrop-filter: blur(0); } }
+/* Shared readable image size; a tall Canvas map can extend the host page. */
+.canvas-viewer, .slider-viewer { --study-height: clamp(360px, calc(100svh - 240px), 600px); height: auto; min-height: max(520px, calc(100svh - 180px)); }
+.canvas-stage, .slider-stage { height: var(--study-height); flex: 0 0 var(--study-height); min-height: 0; }
+.canvas-card, .slider-card { width: min(82%, 960px); height: 100%; }
+
+/* Bounded portfolio embeds. Breakpoints match YYP's current case-study layout,
+   evaluated against the embed width so narrow columns behave like small screens. */
+.viewer {
+  container: portfolio-viewer / inline-size;
+  isolation: isolate;
+  height: auto;
+  min-height: 0;
+  padding: 24px 0 20px;
+  border: 1px solid var(--edge);
+  border-radius: 24px;
+  overflow: clip;
+  background: linear-gradient(145deg, var(--glass-bottom), transparent 60%);
+}
+.canvas-stage, .slider-stage {
+  --slide-step: 88%;
+  height: clamp(280px, 50cqw, 600px);
+  flex: 0 0 auto;
+}
+.canvas-card, .slider-card { width: min(82%, 960px); }
+.panorama-window { width: calc(100% - 48px); height: clamp(280px, 42cqw, 500px); flex: 0 0 auto; }
+.viewer > .caption { height: auto; flex: 0 0 auto; display: grid; margin: 0; }
+.viewer > .caption > div { position: static; grid-area: 1 / 1; padding: 12px 0 0; overflow-wrap: anywhere; }
+.viewer > .caption > div[aria-hidden] { pointer-events: none; }
+.viewer > .linear-dock { flex-shrink: 0; margin-top: 12px; }
+.viewer > .map-dock { margin: 16px 0 0; }
+@container portfolio-viewer (max-width: 877px) {
+  .canvas-stage, .slider-stage { height: clamp(240px, 58cqw, 480px); --slide-step: 92%; }
+  .canvas-card, .slider-card { width: 88%; }
+  .panorama-window { width: calc(100% - 32px); height: clamp(260px, 48cqw, 400px); }
+}
+@container portfolio-viewer (max-width: 560px) {
+  .canvas-stage, .slider-stage { height: clamp(200px, 68cqw, 360px); --slide-step: 100%; perspective: none; }
+  .canvas-card, .slider-card { width: 94%; }
+  .panorama-window { width: calc(100% - 24px); height: 280px; }
+  .caption { width: calc(100% - 32px); text-align: left; }
+  .caption h2 { font-size: 14px; line-height: 1.4; }
+  .caption p { font-size: 12px; }
+  .linear-dock { width: calc(100% - 32px); }
+  .chip-track, .chip-target { height: 30px; }
+  .chip-target { padding-top: 12px; padding-bottom: 12px; }
+  .chip-indicator { top: 12px; }
+}
+
+/* Canvas glass: colored light below a translucent surface, with a soft bevel. */
+.canvas-viewer {
+  --canvas-wash: rgba(255, 255, 255, .3);
+  --canvas-cool: rgba(158, 186, 198, .24);
+  --canvas-sage: rgba(169, 186, 153, .24);
+  --canvas-warm: rgba(218, 198, 171, .2);
+  --canvas-rim: rgba(255, 255, 255, .82);
+  --canvas-inset: rgba(91, 109, 105, .11);
+  border-color: rgba(255, 255, 255, .52);
+  background:
+    linear-gradient(145deg, var(--canvas-wash), transparent 65%),
+    radial-gradient(ellipse at 0% 25%, var(--canvas-cool), transparent 62%),
+    radial-gradient(ellipse at 90% 100%, var(--canvas-sage), transparent 60%),
+    radial-gradient(ellipse at 100% 0%, var(--canvas-warm), transparent 50%);
+  backdrop-filter: blur(24px) saturate(125%);
+  -webkit-backdrop-filter: blur(24px) saturate(125%);
+  box-shadow:
+    inset 0 1px 1px var(--canvas-rim),
+    inset 1px 0 1px var(--canvas-rim),
+    inset 0 -2px 5px var(--canvas-inset),
+    inset 0 0 24px var(--canvas-wash),
+    0 12px 36px rgba(47, 66, 60, .055),
+    0 2px 5px rgba(47, 66, 60, .035);
+}
+.canvas-viewer::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  border-top-color: var(--canvas-rim);
+  border-left-color: var(--canvas-wash);
+  opacity: .5;
+  pointer-events: none;
+}
+.canvas-viewer[data-theme='dark'] {
+  --canvas-wash: rgba(204, 221, 215, .045);
+  --canvas-cool: rgba(101, 141, 163, .15);
+  --canvas-sage: rgba(127, 155, 118, .12);
+  --canvas-warm: rgba(177, 152, 125, .065);
+  --canvas-rim: rgba(221, 239, 232, .22);
+  --canvas-inset: rgba(0, 0, 0, .32);
+  border-color: rgba(204, 221, 215, .13);
+  box-shadow:
+    inset 0 1px 1px var(--canvas-rim),
+    inset 1px 0 1px rgba(221, 239, 232, .08),
+    inset 0 -2px 8px var(--canvas-inset),
+    inset 0 0 24px var(--canvas-wash),
+    0 12px 36px rgba(0, 0, 0, .16);
+}
+
+/* The map straddles the glass edge, with a separate context area above it. */
+.canvas-viewer { overflow: visible; padding-bottom: 44px; margin-bottom: 42px; }
+.canvas-viewer > .map-dock { position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); margin: 0; z-index: 110; }
+.canvas-context { width: min(680px, 90%); min-height: 76px; flex-shrink: 0; padding-top: 12px; }
+.canvas-context .caption { width: 100%; height: auto; display: grid; }
+.canvas-context .caption > div { position: static; grid-area: 1 / 1; padding-top: 0; overflow-wrap: anywhere; }
+.canvas-viewer[data-overview='true'] .canvas-card { cursor: pointer; }
+@media (max-width: 560px) { .canvas-viewer { padding-bottom: 44px; } }
+
+/* Equal context space above and below centers the gallery in the whole glass. */
+.canvas-viewer { padding-block: 24px; }
+.canvas-context-spacer { visibility: hidden; pointer-events: none; }
+.canvas-context { min-height: 76px; }
+@media (max-width: 877px) { .demo-toolbar { height: auto; min-height: 64px; flex-wrap: wrap; padding-block: 10px; } .demo-options { flex-wrap: wrap; } }
+
+/* Light selection reads as a luminous glass bead, without a hard gray ring. */
+.canvas-viewer[data-theme='light'] .dot-target:is(.is-active, .is-locked, :hover) .map-dot {
+  background: radial-gradient(circle at 32% 24%, #fff 0%, rgba(255,255,255,.96) 35%, rgba(244,248,243,.72) 100%);
+  box-shadow: 0 1px 3px rgba(71,90,77,.09), 0 0 6px rgba(255,255,255,.72), inset 0 1px 1px rgba(255,255,255,.95);
+}
