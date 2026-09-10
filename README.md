@@ -108,3 +108,7 @@ The context area reserves space below the images for optional titles and descrip
 The gallery is centered in the entire glass frame, with equal context space above and below. Its cell proportions follow the median artwork aspect ratio; each image fits inside its cell without cropping. Gaps scale with container size, and the gallery remains a centered three-row composition for nine images.
 
 The demo's artwork selector offers UI studies, portrait Posters, and Mixed artwork. These are temporary local layout samples; the production viewer uses each item's `width` and `height` metadata. Focus and detail preserve the selected artwork's aspect ratio.
+
+## Licence
+
+MIT — see [LICENSE](LICENSE).
